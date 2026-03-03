@@ -7,9 +7,11 @@ sudo nmcli con modify "F1Tenth_WiFi" wifi-sec.psk "YOUR_PASSWORD"
 sudo nmcli con modify "F1Tenth_WiFi" connection.autoconnect yes
 
 sudo nmcli con up "F1Tenth_WiFi"
+```
 
+``` console
 ssh f1t@172.20.10.8
-password: f1tenth
+password: YOUR_PASSWORD
 ```
 ## InfluxDB:
 open influxdb3-core-3.8.0-windows_amd64 in terminal

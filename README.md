@@ -1,11 +1,12 @@
 ## Connect wifi automatically:
+'''console
 sudo nmcli con add type wifi ifname wlan0 con-name "F1Tenth_WiFi" ssid "YOUR_SSID"
 sudo nmcli con modify "F1Tenth_WiFi" wifi-sec.key-mgmt wpa-psk
 sudo nmcli con modify "F1Tenth_WiFi" wifi-sec.psk "YOUR_PASSWORD"
 sudo nmcli con modify "F1Tenth_WiFi" connection.autoconnect yes
 
 sudo nmcli con up "F1Tenth_WiFi"
-
+'''
 ssh f1t@172.20.10.8
 password: f1tenth
 

@@ -17,15 +17,15 @@ class OdomLogger(Node):
         self.write_api = self.client.write_api(write_options=SYNCHRONOUS)
         
         self.subscription = self.create_subscription(
-            Odometry, '/odom', self.listener_callback, 10)
-        self.get_logger().info('Odom Logger started. Sending data to Windows...')
+            Odometry, '/odom', self.listener_callback, 1)
+        self.get_logger().info('Odom Logger started. Sending data to InfluxDB...')
 
     def listener_callback(self, msg):
         # Create the data point
         p = Point("odometry") \
-            .field("x", msg.pose.pose.position.x) \
-            .field("y", msg.pose.pose.position.y) \
-            .field("velocity", msg.twist.twist.linear.x)
+            .field("velocity", msg.twist.twist.linear.x) \
+            .field("steering_angle", msg.twist.twist.angular.z) \
+            .field("timestamp", msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9)
         
         # Write to the database
         self.write_api.write(bucket="f1tenth_db", record=p)

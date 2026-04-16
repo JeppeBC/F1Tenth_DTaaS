@@ -30,23 +30,6 @@ python odom_logger.py
 ## Grafana:
 http://localhost:3000
 
-## Run the car: might not be needed anymore
-```console
-cd au_f1tenth_ws/rl-policy-deployment/src/f1tenth_rl_policy/f1tenth_rl_policy
-```
-
-#ensure ROS_DOMAIN_ID == 0
-```console
-echo $ROS_DOMAIN_ID
-```
-
-```console
-cd ~/au_f1tenth_ws/rl-policy-deployment/
-source install/setup.bash
-
-ros2 run f1tenth_rl_policy rl_agent
-```
-
 ## Control the car with 8bitdo controller:
 set controller to bluetooth mode
 
@@ -69,3 +52,21 @@ hold right bumber, left stick controls acceleration, right stick controls steeri
 ```console
 ros2 run rviz2 rviz2
 ```
+
+## Run the gym bridge in WSL2:
+```console
+source ~/sim_ws/install/setup.bash
+ros2 launch f1tenth_gym_ros gym_bridge_launch.py
+```
+## Relay teleop to drive in second terminal:
+```console
+ros2 run topic_tools relay /teleop /drive
+```
+
+## we need a custum scipt to make the bi-directional communication between the PT and DT work, we can run the script in the WSL2 terminal:
+```console
+python custom_script.py 
+<!-- needs to be implemented -->
+```
+
+![alt text](commands.png?raw=true "Commands")

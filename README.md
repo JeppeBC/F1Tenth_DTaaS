@@ -1,3 +1,24 @@
+## Full system test:
+```console
+# Terminal 1: 
+ros2 launch f1tenth_gym_ros gym_bridge_launch.py
+
+# Terminal 2:
+ros2 run topic_tools relay /teleop /drive
+
+# Terminal 3:
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+
+# Terminal 4:
+ros2 run f1tenth_dt_ros twist_to_ackermann
+
+# Terminal 5:
+ros2 run f1tenth_dt_ros dt_pt_bridge --ros-args -p pt_host:=172.20.10.8
+
+# Terminal 6:
+ros2 run f1tenth_dt_ros latency_logger --ros-args -p output_dir:=/tmp/latency
+```
+
 ## Connect wifi automatically:
 
 ```console
@@ -13,6 +34,7 @@ sudo nmcli con up "F1Tenth_WiFi"
 ssh f1t@172.20.10.8
 password: YOUR_PASSWORD
 ```
+
 ## InfluxDB:
 open influxdb3-core-3.8.0-windows_amd64 in terminal
 ```console
@@ -52,21 +74,3 @@ hold right bumber, left stick controls acceleration, right stick controls steeri
 ```console
 ros2 run rviz2 rviz2
 ```
-
-## Run the gym bridge in WSL2:
-```console
-source ~/sim_ws/install/setup.bash
-ros2 launch f1tenth_gym_ros gym_bridge_launch.py
-```
-## Relay teleop to drive in second terminal:
-```console
-ros2 run topic_tools relay /teleop /drive
-```
-
-## we need a custum scipt to make the bi-directional communication between the PT and DT work, we can run the script in the WSL2 terminal:
-```console
-python custom_script.py 
-<!-- needs to be implemented -->
-```
-
-![alt text](commands.png?raw=true "Commands")

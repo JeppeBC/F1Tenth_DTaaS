@@ -10,13 +10,13 @@ ros2 run topic_tools relay /teleop /drive
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 
 # Terminal 4:
-ros2 run f1tenth_dt_ros twist_to_ackermann
+ros2 run f1tenth_gym_ros twist_to_ackermann
 
 # Terminal 5:
-ros2 run f1tenth_dt_ros dt_pt_bridge --ros-args -p pt_host:=172.20.10.8
+ros2 run f1tenth_gym_ros dt_pt_bridge --ros-args -p pt_host:=172.20.10.8
 
 # Terminal 6:
-ros2 run f1tenth_dt_ros latency_logger --ros-args -p output_dir:=/tmp/latency
+ros2 run f1tenth_gym_ros latency_logger --ros-args -p output_dir:=/tmp/latency
 ```
 
 ## Connect wifi automatically:

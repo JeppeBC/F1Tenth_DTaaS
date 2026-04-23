@@ -42,7 +42,7 @@ from builtin_interfaces.msg import Time as RosTime
 # ---------------------------------------------------------------------------
 # Configuration — edit these or override via ROS params
 # ---------------------------------------------------------------------------
-DEFAULT_PT_HOST = "172.20.10.8"   # IP of the physical car on WiFi
+DEFAULT_PT_HOST = "192.168.1.100"   # IP of the physical car on WiFi
 DEFAULT_PT_PORT = 9870              # UDP port the car listens on
 DEFAULT_SEND_HZ = 50                # Max forward rate (Hz) — throttle protection
 # ---------------------------------------------------------------------------

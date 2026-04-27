@@ -21,6 +21,7 @@ ros2 run f1tenth_gym_ros latency_logger --ros-args -p output_dir:=/tmp/latency
 ```
 
 |Terminal: | Command: | Purpose: |
+| --- | --- | --- |
 |1 | `Source ~/sim_ws/install/setup.bash /
 ros2 launch f1tenth_gym_ros gym_bridge_launch.py` | Sim + RViz2|
 |2 | `ros2 run topic_tools relay /teleop /drive` |/teleop → /drive for gym_bridge|

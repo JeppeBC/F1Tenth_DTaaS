@@ -20,6 +20,19 @@ ros2 run f1tenth_gym_ros dt_pt_bridge --ros-args -p pt_host:=172.20.10.8
 ros2 run f1tenth_gym_ros latency_logger --ros-args -p output_dir:=/tmp/latency
 ```
 
+|Terminal: | Command: | Purpose: |
+|---|---|---|
+|1 | `ros2 launch f1tenth_gym_ros gym_bridge_launch.py` | Sim + RViz2|
+|---|---|---|
+|2 | `ros2 run topic_tools relay /teleop /drive` |/teleop → /drive for gym_bridge|
+|---|---|---|
+|3 | 'ros2 run f1tenth_gym_ros ackermann_keyboard_teleop' | Keyboard — this terminal needs focus|
+|---|---|---|
+|4 | 'ros2 run f1tenth_gym_ros dt_pt_bridge --ros-args -p pt_host:=172.20.10.8' | Forwards to PT|
+|---|---|---|
+|5 | 'ros2 run f1tenth_gym_ros latency_logger --ros-args -p output_dir:=/tmp/latency' | Benchmarking|
+
+
 ## Connect wifi automatically:
 
 ```console

@@ -1,34 +1,18 @@
 ## Full system test:
-```console
-# Terminal 1: 
-source ~/sim_ws/install/setup.bash
-ros2 launch f1tenth_gym_ros gym_bridge_launch.py
-
-# Terminal 2:
-ros2 run topic_tools relay /teleop /drive
-
-# Terminal 3:
-ros2 run teleop_twist_keyboard teleop_twist_keyboard
-
-# Terminal 4:
-ros2 run f1tenth_gym_ros twist_to_ackermann
-
-# Terminal 5:
-ros2 run f1tenth_gym_ros dt_pt_bridge --ros-args -p pt_host:=172.20.10.8
-
-# Terminal 6:
-ros2 run f1tenth_gym_ros latency_logger --ros-args -p output_dir:=/tmp/latency
-```
-
+# WSL
 |Terminal: | Command: | Purpose: |
 | --- | --- | --- |
-|1 | `Source ~/sim_ws/install/setup.bash / ros2 launch f1tenth_gym_ros gym_bridge_launch.py` | Sim + RViz2|
-|2 | `ros2 run topic_tools relay /teleop /drive` |/teleop → /drive for gym_bridge|
-|3 | 'ros2 run f1tenth_gym_ros ackermann_keyboard_teleop' | Keyboard — this terminal needs focus|
-|4 | 'ros2 run f1tenth_gym_ros dt_pt_bridge --ros-args -p pt_host:=172.20.10.8' | Forwards to PT|
-|5 | 'ros2 run f1tenth_gym_ros latency_logger --ros-args -p output_dir:=/tmp/latency' | Benchmarking|
-| On the car|
-|1 | 'export ROS_DOMAIN_ID=1 / python3 dt_pt_listener.py --port 9870 --echo-back' | |
+|all | `cd ~/sim_ws && colcon build --packages-select f1tenth_gym_ros &&` <br> `source install/setup.bash` | Sets up the environment|
+|1 | `ros2 launch f1tenth_gym_ros gym_bridge_launch.py` | Sim + RViz2 |
+|2 | `ros2 run topic_tools relay /teleop /drive` |`/teleop` → `/drive` for gym_bridge |
+|3 | `ros2 run f1tenth_gym_ros ackermann_keyboard_teleop` | Keyboard — this terminal needs focus |
+|4 | `ros2 run f1tenth_gym_ros dt_pt_bridge --ros-args -p pt_host:=172.20.10.8` | Forwards to PT |
+|5 |  `ros2 run f1tenth_gym_ros latency_logger --ros-args -p output_dir:=/tmp/latency` | Benchmarking |
+
+# On the car 
+|Terminal: | Command: | Purpose: |
+| --- | --- | --- |
+|1 | `export ROS_DOMAIN_ID=1` <br> `python3 dt_pt_listener.py --port 9870 --echo-back` | Benchmarking |
 
 
 ## Connect wifi automatically:

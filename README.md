@@ -12,7 +12,7 @@
 # On the car 
 |Terminal: | Command: | Purpose: |
 | --- | --- | --- |
-|1 | `export ROS_DOMAIN_ID=1` <br> `python3 dt_pt_listener.py --port 9870 --echo-back` | Benchmarking |
+|1 | `cd Desktop/F1Tenth_DTaaS/ && export ROS_DOMAIN_ID=0` <br> `python3 dt_pt_listener.py --port 9870 --echo-back --send-odom --dt-host 172.20.10.2 --odom-port 9871` | Benchmarking |
 
 
 ## Connect wifi automatically:

@@ -2,7 +2,7 @@
 # WSL
 |Terminal: | Command: | Purpose: |
 | --- | --- | --- |
-|all | `cd ~/sim_ws && colcon build --packages-select f1tenth_gym_ros &&` <br> `source install/setup.bash` | Sets up the environment|
+|all | `cd ~/sim_ws && colcon build --packages-select f1tenth_gym_ros && source install/setup.bash` | Sets up the environment|
 |1 | `ros2 launch f1tenth_gym_ros gym_bridge_launch.py` | Sim + RViz2 |
 |2 | `ros2 run topic_tools relay /teleop /drive` |`/teleop` → `/drive` for gym_bridge |
 |3 | `ros2 run f1tenth_gym_ros ackermann_keyboard_teleop` | Keyboard — this terminal needs focus |
@@ -12,7 +12,7 @@
 # On the car 
 |Terminal: | Command: | Purpose: |
 | --- | --- | --- |
-|1 | `export ROS_DOMAIN_ID=1` <br> `python3 dt_pt_listener.py --port 9870 --echo-back` | Benchmarking |
+|1 | `cd Desktop/F1Tenth_DTaaS/ && export ROS_DOMAIN_ID=0` <br> `python3 dt_pt_listener.py --port 9870 --echo-back --send-odom --dt-host 172.20.10.2 --odom-port 9871` | Benchmarking |
 
 
 ## Connect wifi automatically:

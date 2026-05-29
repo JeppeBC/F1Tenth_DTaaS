@@ -164,7 +164,7 @@ def main():
 
         if ax1 is not None:
             ax1.plot(range(len(lat)), lat.values, linewidth=0.6,
-                     color=COLOURS[0], alpha=0.7)
+                        color=COLOURS[0], alpha=0.7)
             ax1.axhline(lat.mean(), color="#D85A30", linewidth=1.2,
                         linestyle="--", label=f"mean {lat.mean():.2f} ms")
             ax1.axhline(lat.quantile(0.99), color="#993C1D", linewidth=1,

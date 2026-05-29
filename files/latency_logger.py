@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 """
-latency_logger.py  (with self-diagnostics)
-------------------------------------------
-Subscribes to /teleop_echo (published by dt_pt_bridge whenever it
-forwards a command to the PT over UDP).
+latency_logger.py  (timing-fixed)
+----------------------------------
+The bridge stamps each /teleop_echo message with the ROS clock time
+at dispatch. The logger records the ROS clock time at receipt.
+Both nodes are on the same machine (WSL2), so the same ROS clock is used
+and the difference is a true measurement of processing + publish latency.
 
-Every 5 seconds it prints a status report so you can see exactly
-what is and isn't arriving, rather than silently waiting.
+For WiFi RTT: when the car runs dt_pt_listener --echo-back, the car echoes
+the UDP packet back, the bridge receives it and re-publishes on /teleop_echo.
+That round-trip gives RTT/2 as the one_way_ms value.
 
-If /teleop_echo is silent:
-  - Check dt_pt_bridge is running:   ros2 node list | grep bridge
-  - Check /drive has traffic:        ros2 topic hz /drive
-  - Check /teleop_echo exists:       ros2 topic list | grep echo
+Rejected samples (negative or >5000ms) indicate clock anomalies — logged
+but not written to CSV.
 """
 
 import csv
@@ -21,6 +22,7 @@ from collections import deque
 
 import rclpy
 from rclpy.node import Node
+from rclpy.time import Time
 from ackermann_msgs.msg import AckermannDriveStamped
 from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
 
@@ -46,77 +48,55 @@ class LatencyLogger(Node):
         ])
         self._csv_file.flush()
 
-        self._seq    = 0
+        self._seq     = 0
         self._window: deque[float] = deque(maxlen=WINDOW)
-
-        # Clock anchoring (both bridge and logger are on the same machine)
-        self._anchor_ros  = None
-        self._anchor_mono = None
-
-        # Counters for the watchdog
-        self._echo_total    = 0   # all /teleop_echo messages received
-        self._echo_accepted = 0   # those with frame_id == 'dt_send'
-        self._last_watchdog = time.monotonic()
+        self._rejected = 0
 
         self._sub_echo = self.create_subscription(
             AckermannDriveStamped, "/teleop_echo",
             self._on_echo, 10,
         )
-
         self._pub_diag   = self.create_publisher(DiagnosticArray, "/diagnostics", 5)
-        self._diag_timer = self.create_timer(1.0,  self._publish_diagnostics)
+        self._diag_timer  = self.create_timer(1.0, self._publish_diagnostics)
         self._watch_timer = self.create_timer(5.0, self._watchdog)
+
+        self._echo_count = 0
 
         self.get_logger().info(f"Logging latency to {csv_path}")
         self.get_logger().info(
-            "Waiting for /teleop_echo  (frame_id='dt_send')  from dt_pt_bridge..."
+            "Waiting for /teleop_echo (frame_id='dt_send') from dt_pt_bridge..."
         )
 
     # ------------------------------------------------------------------
-    def _stamp_ns(self, stamp) -> int:
-        return stamp.sec * 1_000_000_000 + stamp.nanosec
-
     def _on_echo(self, msg: AckermannDriveStamped):
-        self._echo_total += 1
+        # Record receipt time immediately using ROS clock
+        recv_ros_ns = self.get_clock().now().nanoseconds
+        self._echo_count += 1
 
         if msg.header.frame_id != "dt_send":
-            self.get_logger().warn(
-                f"Ignoring /teleop_echo with frame_id='{msg.header.frame_id}' "
-                f"(expected 'dt_send'). Check dt_pt_bridge is running.",
-                throttle_duration_sec=5.0,
-            )
             return
 
-        self._echo_accepted += 1
-        recv_mono = time.monotonic()
-        send_ns   = self._stamp_ns(msg.header.stamp)
+        send_ros_ns = (
+            msg.header.stamp.sec * 1_000_000_000 + msg.header.stamp.nanosec
+        )
 
-        # Anchor on first accepted message
-        if self._anchor_ros is None:
-            self._anchor_ros  = send_ns
-            self._anchor_mono = recv_mono
-            self.get_logger().info(
-                "Clock anchor set — latency measurement active."
-            )
-            return  # skip first sample (no baseline yet)
+        one_way_ms = (recv_ros_ns - send_ros_ns) / 1_000_000.0
 
-        elapsed_since_anchor = (send_ns - self._anchor_ros) / 1e9
-        send_mono_equiv      = self._anchor_mono + elapsed_since_anchor
-        one_way_ms           = (recv_mono - send_mono_equiv) * 1000.0
-
-        # Sanity gate
         if one_way_ms < 0 or one_way_ms > 5000:
+            self._rejected += 1
             self.get_logger().warn(
-                f"Rejected sample: one_way_ms={one_way_ms:.1f} (out of range)",
+                f"Rejected sample: one_way_ms={one_way_ms:.1f}  "
+                f"send_ns={send_ros_ns}  recv_ns={recv_ros_ns}",
                 throttle_duration_sec=2.0,
             )
             return
 
         self._window.append(one_way_ms)
-        recv_ns = int(recv_mono * 1e9)
 
         self._writer.writerow([
-            self._seq, send_ns, recv_ns,
+            self._seq,
+            send_ros_ns,
+            recv_ros_ns,
             f"{one_way_ms:.3f}",
             f"{msg.drive.steering_angle:.4f}",
             f"{msg.drive.speed:.4f}",
@@ -126,43 +106,31 @@ class LatencyLogger(Node):
 
         self.get_logger().info(
             f"[seq {self._seq:4d}]  "
-            f"one_way={one_way_ms:6.2f} ms  "
-            f"avg={self._avg():6.2f} ms  "
-            f"p99={self._p99():6.2f} ms",
+            f"one_way={one_way_ms:6.3f} ms  "
+            f"avg={self._avg():6.3f} ms  "
+            f"p99={self._p99():6.3f} ms",
             throttle_duration_sec=0.5,
         )
 
     # ------------------------------------------------------------------
     def _watchdog(self):
-        """Prints a status report every 5 s so the user knows what's happening."""
-        now = time.monotonic()
-        elapsed = now - self._last_watchdog
-        self._last_watchdog = now
-
-        if self._echo_total == 0:
+        if self._echo_count == 0:
             self.get_logger().warn(
                 "\n"
-                "  ╔══════════════════════════════════════════════════╗\n"
-                "  ║  NO /teleop_echo messages received yet.          ║\n"
-                "  ║  Check the following:                            ║\n"
-                "  ║  1. dt_pt_bridge is running:                     ║\n"
-                "  ║     ros2 node list | grep bridge                 ║\n"
-                "  ║  2. /drive has traffic (keyboard teleop active): ║\n"
-                "  ║     ros2 topic hz /drive                         ║\n"
-                "  ║  3. relay is running (/teleop → /drive):         ║\n"
-                "  ║     ros2 topic info /drive --verbose             ║\n"
-                "  ╚══════════════════════════════════════════════════╝"
-            )
-        elif self._echo_accepted == 0:
-            self.get_logger().warn(
-                f"  Received {self._echo_total} /teleop_echo msgs but NONE had "
-                f"frame_id='dt_send'. The bridge may not be stamping correctly. "
-                f"Run: ros2 topic echo /teleop_echo --once"
+                "  ╔═══════════════════════════════════════════════════╗\n"
+                "  ║  NO /teleop_echo received yet.                   ║\n"
+                "  ║  Check:                                          ║\n"
+                "  ║  ros2 topic hz /teleop_echo                      ║\n"
+                "  ║  ros2 topic hz /drive                            ║\n"
+                "  ║  ros2 node list | grep bridge                    ║\n"
+                "  ╚═══════════════════════════════════════════════════╝"
             )
         else:
             self.get_logger().info(
-                f"  Status: {self._echo_accepted} samples recorded  "
-                f"avg={self._avg():.2f} ms  p99={self._p99():.2f} ms"
+                f"  Status: {self._seq} recorded  "
+                f"{self._rejected} rejected  "
+                f"avg={self._avg():.3f} ms  "
+                f"p99={self._p99():.3f} ms"
             )
 
     # ------------------------------------------------------------------
@@ -190,11 +158,12 @@ class LatencyLogger(Node):
             DiagnosticStatus.WARN if avg < 50 else
             DiagnosticStatus.ERROR
         )
-        status.message = f"avg={avg:.1f}ms  p99={p99:.1f}ms  n={len(self._window)}"
+        status.message = f"avg={avg:.3f}ms  p99={p99:.3f}ms  n={len(self._window)}"
         status.values  = [
-            KeyValue(key="avg_ms",  value=f"{avg:.2f}"),
-            KeyValue(key="p99_ms",  value=f"{p99:.2f}"),
-            KeyValue(key="samples", value=str(len(self._window))),
+            KeyValue(key="avg_ms",   value=f"{avg:.3f}"),
+            KeyValue(key="p99_ms",   value=f"{p99:.3f}"),
+            KeyValue(key="samples",  value=str(len(self._window))),
+            KeyValue(key="rejected", value=str(self._rejected)),
         ]
         arr.status.append(status)
         self._pub_diag.publish(arr)

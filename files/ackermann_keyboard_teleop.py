@@ -21,10 +21,10 @@ Parameters  (--ros-args -p name:=value)
 ----------
   publish_topic   default: /teleop
   publish_hz      default: 50
-  max_speed       default: 5.0   m/s
-  max_steer       default: 3.14  rad  (~23 deg, typical F1Tenth limit)
+  max_speed       default: 3.0   m/s
+  max_steer       default: 0.4   rad  (~23 deg, typical F1Tenth limit)
   speed_step      default: 0.1   m/s per keypress
-  steer_step      default: 0.1   rad per keypress
+  steer_step      default: 0.05  rad per keypress
 
 Run
 ---
@@ -72,10 +72,10 @@ class AckermannKeyboardTeleop(Node):
 
         self.declare_parameter("publish_topic", "/teleop")
         self.declare_parameter("publish_hz",    50.0)
-        self.declare_parameter("max_speed",     5.0)
-        self.declare_parameter("max_steer",     3.14)
+        self.declare_parameter("max_speed",     3.0)
+        self.declare_parameter("max_steer",     0.4)
         self.declare_parameter("speed_step",    0.1)
-        self.declare_parameter("steer_step",    0.1)
+        self.declare_parameter("steer_step",    0.05)
 
         topic   = self.get_parameter("publish_topic").value
         hz      = self.get_parameter("publish_hz").value
@@ -148,6 +148,12 @@ class AckermannKeyboardTeleop(Node):
         with self._lock:
             speed = self._speed
             steer = self._steer
+
+        # When idle (speed=0, steer=0), stop publishing so the mux /drive
+        # slot times out (0.2s) and the joystick at priority 90 reclaims PT.
+        if abs(speed) < 0.001 and abs(steer) < 0.001:
+            return
+
         msg = AckermannDriveStamped()
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.header.frame_id = "dt_send"   # marks message for latency logger

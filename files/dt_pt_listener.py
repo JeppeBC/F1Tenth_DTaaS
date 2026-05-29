@@ -2,114 +2,93 @@
 """
 dt_pt_listener.py  —  runs ON the physical F1Tenth car
 -------------------------------------------------------
-Receives UDP drive commands from dt_pt_bridge (WSL2/DT side) and
-publishes them on /dt_drive — a SEPARATE topic from the Bluetooth
-controller's /teleop — so the two sources never conflict.
- 
-A lightweight priority mux then decides which source controls the car:
-  - Bluetooth controller (joy_teleop → /teleop) = HIGH priority
-  - DT keyboard (UDP → /dt_drive)               = LOW priority
- 
-If the Bluetooth controller has been silent for more than `bt_timeout`
-seconds, the mux switches to DT commands automatically. As soon as the
-controller sends anything, it takes back control instantly.
- 
-This means:
-  - Bluetooth always overrides keyboard (you can take manual control)
-  - Keyboard drives the car when the controller is idle
-  - No interference between the two sources
- 
-Published to /drive (what the VESC driver listens on).
- 
+Clean separation of concerns — does NOT touch the existing control chain:
+  joy_teleop → /teleop → ackermann_mux → /ackermann_cmd → VESC
+
+This script only:
+  1. Receives keyboard commands from WSL2 via UDP → publishes to /drive
+     (ackermann_mux navigation slot, priority 10 — joystick always wins)
+  2. Subscribes to /ackermann_cmd (mux output) → sends back to WSL2 via UDP
+     so the DT mirrors whatever the mux decides (keyboard or controller)
+  3. Sends /odom back to WSL2 for position mirroring
+  4. Echoes drive packets back to WSL2 for latency measurement
+
 Usage
 -----
-  export ROS_DOMAIN_ID=1
-  python3 dt_pt_listener.py --port 9870 --echo-back
- 
-Parameters
-----------
-  --host        bind address (default 0.0.0.0)
-  --port        UDP port     (default 9870)
-  --echo-back   send UDP echo back to sender for RTT measurement
-  --bt-timeout  seconds of Bluetooth silence before DT takes over (default 1.0)
-  --output-topic topic the mux publishes to (default /drive)
+  export ROS_DOMAIN_ID=0
+  python3 dt_pt_listener.py --port 9870 --echo-back \\
+      --send-odom --dt-host 172.20.10.2 --odom-port 9871
+
+The joystick always has priority 90 vs keyboard priority 10 in the mux.
+No interference with existing teleop chain whatsoever.
 """
- 
+
 import argparse
 import socket
 import struct
 import threading
 import time
- 
+import math
+
 import rclpy
 from rclpy.node import Node
 from ackermann_msgs.msg import AckermannDriveStamped, AckermannDrive
- 
- 
-PACKET_FMT  = "<qff"
-PACKET_SIZE = struct.calcsize(PACKET_FMT)   # 16 bytes
- 
- 
+from nav_msgs.msg import Odometry
+
+DRIVE_FMT  = "<qff"
+DRIVE_SIZE = struct.calcsize(DRIVE_FMT)   # 16 bytes  (stamp_ns, steer, speed)
+ODOM_FMT   = "<qffff"                     # stamp_ns, x, y, heading, speed
+
+
 class DtPtListener(Node):
-    def __init__(self, host: str, port: int, echo_back: bool,
-                 bt_timeout: float, output_topic: str):
+    def __init__(self, host, port, echo_back, output_topic,
+                 send_odom, dt_host, odom_port):
         super().__init__("dt_pt_listener")
- 
-        self._echo_back  = echo_back
-        self._bt_timeout = bt_timeout
- 
-        # Publisher: final muxed output → VESC driver
-        self._pub_out = self.create_publisher(
+
+        self._echo_back   = echo_back
+        self._send_odom   = send_odom
+        self._dt_host     = dt_host
+        self._odom_port   = odom_port
+
+        # Publish keyboard commands to navigation slot (/drive, priority 10)
+        self._pub_drive = self.create_publisher(
             AckermannDriveStamped, output_topic, 10
         )
- 
-        # Publisher: DT commands on their own topic (for inspection/logging)
-        self._pub_dt = self.create_publisher(
-            AckermannDriveStamped, "/dt_drive", 10
+
+        # Subscribe to mux output — relay back to DT for mirroring
+        self._sub_cmd = self.create_subscription(
+            AckermannDriveStamped, "/ackermann_cmd",
+            self._ackermann_cmd_callback, 10,
         )
- 
-        # Subscriber: Bluetooth controller
-        self._sub_bt = self.create_subscription(
-            AckermannDriveStamped, "/teleop",
-            self._bt_callback, 10,
-        )
- 
-        # State
-        self._last_bt_time = 0.0        # monotonic time of last BT message
-        self._last_dt_msg  = None       # most recent DT command
-        self._lock         = threading.Lock()
- 
-        # UDP receive thread
+
+        # Subscribe to odom — relay back to DT for position sync
+        if send_odom and dt_host:
+            self._sub_odom = self.create_subscription(
+                Odometry, "/odom", self._odom_callback, 10
+            )
+            self.get_logger().info(
+                f"Sending /odom back to DT at {dt_host}:{odom_port}"
+            )
+
+        # Single UDP socket for all outgoing traffic
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self._sock.bind((host, port))
+
         self.get_logger().info(
-            f"Listening for DT commands on {host}:{port}  "
-            f"(bt_timeout={bt_timeout}s, output={output_topic})"
+            f"Listening for DT keyboard commands on {host}:{port}\n"
+            f"  → publishing to '{output_topic}' (mux navigation slot)\n"
+            f"  → joystick still controls via /teleop at higher priority\n"
+            f"  → mirroring /ackermann_cmd back to DT"
         )
- 
+
         self._udp_thread = threading.Thread(
             target=self._udp_recv_loop, daemon=True
         )
         self._udp_thread.start()
- 
-        # Mux timer — publishes the winning command at 50 Hz
-        self._mux_timer = self.create_timer(0.02, self._mux_publish)
- 
-        self._active_source = "none"
- 
+
     # ------------------------------------------------------------------
-    # Bluetooth callback — just update timestamp, pass through immediately
-    # ------------------------------------------------------------------
-    def _bt_callback(self, msg: AckermannDriveStamped):
-        with self._lock:
-            self._last_bt_time = time.monotonic()
-        # BT message goes straight to output — no mux delay
-        self._pub_out.publish(msg)
-        self._log_source("bluetooth")
- 
-    # ------------------------------------------------------------------
-    # UDP receive — runs in background thread
+    # Receive keyboard commands from WSL2 over UDP
     # ------------------------------------------------------------------
     def _udp_recv_loop(self):
         while rclpy.ok():
@@ -117,79 +96,98 @@ class DtPtListener(Node):
                 data, addr = self._sock.recvfrom(64)
             except OSError:
                 continue
- 
-            if len(data) < PACKET_SIZE:
+
+            if len(data) < DRIVE_SIZE:
                 continue
- 
-            stamp_ns, steer, speed = struct.unpack_from(PACKET_FMT, data)
- 
+
+            stamp_ns, steer, speed = struct.unpack_from(DRIVE_FMT, data)
+
             msg = AckermannDriveStamped()
-            msg.header.stamp.sec    = stamp_ns // 1_000_000_000
-            msg.header.stamp.nanosec = stamp_ns % 1_000_000_000
-            msg.header.frame_id     = "dt_recv"
+            msg.header.stamp.sec     = stamp_ns // 1_000_000_000
+            msg.header.stamp.nanosec = stamp_ns %  1_000_000_000
+            msg.header.frame_id      = "dt_recv"
             msg.drive = AckermannDrive(
                 steering_angle=float(steer),
                 speed=float(speed),
             )
- 
-            with self._lock:
-                self._last_dt_msg = msg
- 
-            # Always publish to /dt_drive for logging regardless of mux state
-            self._pub_dt.publish(msg)
- 
+
+            # Publish to /drive (navigation slot, mux priority 10)
+            # Joystick at priority 90 always overrides when active
+            self._pub_drive.publish(msg)
+
+            # Echo packet back for RTT latency measurement
             if self._echo_back:
                 try:
                     self._sock.sendto(data, addr)
                 except OSError:
                     pass
- 
+
     # ------------------------------------------------------------------
-    # Mux — runs at 50 Hz, publishes DT command only when BT is idle
+    # Mirror mux output back to DT over UDP
     # ------------------------------------------------------------------
-    def _mux_publish(self):
-        now = time.monotonic()
-        with self._lock:
-            bt_age = now - self._last_bt_time
-            dt_msg = self._last_dt_msg
- 
-        # BT controller is active — it already published directly, skip
-        if bt_age < self._bt_timeout:
+    def _ackermann_cmd_callback(self, msg: AckermannDriveStamped):
+        """
+        /ackermann_cmd is the authoritative output of the car's mux.
+        Send it back to WSL2 so gym_bridge can mirror the real car's
+        motion in RViz2 — whether driven by joystick or keyboard.
+        """
+        if not self._dt_host:
             return
- 
-        # BT is idle — publish most recent DT command if we have one
-        if dt_msg is not None:
-            self._pub_out.publish(dt_msg)
-            self._log_source("dt_keyboard")
- 
+        stamp_ns = (
+            msg.header.stamp.sec * 1_000_000_000 + msg.header.stamp.nanosec
+        )
+        payload = struct.pack(
+            DRIVE_FMT, stamp_ns,
+            msg.drive.steering_angle,
+            msg.drive.speed,
+        )
+        try:
+            self._sock.sendto(payload, (self._dt_host, 9872))  # separate port
+        except OSError:
+            pass
+
     # ------------------------------------------------------------------
-    def _log_source(self, source: str):
-        if source != self._active_source:
-            self._active_source = source
-            self.get_logger().info(
-                f"Control source → {source.upper()}"
-            )
- 
+    # Send odometry back to WSL2 for position sync
+    # ------------------------------------------------------------------
+    def _odom_callback(self, msg: Odometry):
+        if not self._send_odom or not self._dt_host:
+            return
+        x       = msg.pose.pose.position.x
+        y       = msg.pose.pose.position.y
+        qz      = msg.pose.pose.orientation.z
+        qw      = msg.pose.pose.orientation.w
+        heading = 2.0 * math.atan2(qz, qw)
+        speed   = msg.twist.twist.linear.x
+        stamp_ns = (
+            msg.header.stamp.sec * 1_000_000_000 + msg.header.stamp.nanosec
+        )
+        payload = struct.pack(ODOM_FMT, stamp_ns, x, y, heading, speed)
+        try:
+            self._sock.sendto(payload, (self._dt_host, self._odom_port))
+        except OSError:
+            pass
+
     def destroy_node(self):
         self._sock.close()
         super().destroy_node()
- 
- 
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--host",         default="0.0.0.0")
-    parser.add_argument("--port",         type=int,   default=9870)
+    parser.add_argument("--port",         type=int, default=9870)
     parser.add_argument("--echo-back",    action="store_true")
-    parser.add_argument("--bt-timeout",   type=float, default=1.0,
-                        help="Seconds of BT silence before DT takes over")
     parser.add_argument("--output-topic", default="/drive",
-                        help="Topic to publish muxed commands on")
+                        help="Mux navigation topic (default: /drive)")
+    parser.add_argument("--send-odom",    action="store_true")
+    parser.add_argument("--dt-host",      default="")
+    parser.add_argument("--odom-port",    type=int, default=9871)
     args, ros_args = parser.parse_known_args()
- 
+
     rclpy.init(args=ros_args)
     node = DtPtListener(
-        args.host, args.port, args.echo_back,
-        args.bt_timeout, args.output_topic,
+        args.host, args.port, args.echo_back, args.output_topic,
+        args.send_odom, args.dt_host, args.odom_port,
     )
     try:
         rclpy.spin(node)
@@ -201,7 +199,7 @@ def main():
             rclpy.shutdown()
         except Exception:
             pass
- 
- 
+
+
 if __name__ == "__main__":
     main()

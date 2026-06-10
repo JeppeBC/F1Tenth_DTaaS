@@ -1,35 +1,4 @@
 #!/usr/bin/env python3
-"""
-ackermann_keyboard_teleop.py
------------------------------
-Purpose-built keyboard teleop for F1Tenth / Ackermann vehicles.
-Publishes AckermannDriveStamped continuously at a fixed rate (50 Hz)
-so the sim and PT receive smooth, non-stepping commands.
-
-Controls
---------
-  w / s   — increase / decrease speed  (+/- speed_step m/s)
-  a / d   — steer left / right         (+/- steer_step rad)
-  space   — full stop (speed=0, steer=0)
-  r       — reset to zero
-  q       — quit
-
-Speed and steering values are held between keypresses — the car keeps
-moving at the last commanded value until you change it.
-
-Parameters  (--ros-args -p name:=value)
-----------
-  publish_topic   default: /teleop
-  publish_hz      default: 50
-  max_speed       default: 3.0   m/s
-  max_steer       default: 0.4   rad  (~23 deg, typical F1Tenth limit)
-  speed_step      default: 0.1   m/s per keypress
-  steer_step      default: 0.05  rad per keypress
-
-Run
----
-  ros2 run f1tenth_gym_ros ackermann_keyboard_teleop
-"""
 
 import sys
 import select

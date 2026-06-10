@@ -1,19 +1,4 @@
 #!/usr/bin/env python3
-"""
-latency_logger.py  (timing-fixed)
-----------------------------------
-The bridge stamps each /teleop_echo message with the ROS clock time
-at dispatch. The logger records the ROS clock time at receipt.
-Both nodes are on the same machine (WSL2), so the same ROS clock is used
-and the difference is a true measurement of processing + publish latency.
-
-For WiFi RTT: when the car runs dt_pt_listener --echo-back, the car echoes
-the UDP packet back, the bridge receives it and re-publishes on /teleop_echo.
-That round-trip gives RTT/2 as the one_way_ms value.
-
-Rejected samples (negative or >5000ms) indicate clock anomalies — logged
-but not written to CSV.
-"""
 
 import csv
 import pathlib

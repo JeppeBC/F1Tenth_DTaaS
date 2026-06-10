@@ -1,18 +1,4 @@
 #!/usr/bin/env python3
-"""
-dt_pt_bridge.py
----------------
-Forwards keyboard drive commands from the DT to the Physical Twin over UDP.
-
-Only forwards messages with frame_id == 'dt_send' — i.e. commands stamped
-by ackermann_keyboard_teleop. This prevents the Bluetooth controller's
-commands (which bleed back from the car via DDS on domain 0) from being
-re-forwarded to the car, breaking the feedback loop.
-
-Subscribes : /drive        (ackermann_msgs/AckermannDriveStamped)
-Publishes  : /teleop_echo  (ackermann_msgs/AckermannDriveStamped)
-UDP out    : pt_host:pt_port
-"""
 
 import socket
 import struct

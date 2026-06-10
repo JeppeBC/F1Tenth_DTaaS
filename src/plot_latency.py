@@ -1,29 +1,3 @@
-# """
-# plot_latency.py
-# ---------------
-# Analysis of latency CSV files from latency_logger.py.
-
-# Usage:
-#     # Single file
-#     python3 plot_latency.py latency_123.csv --warmup 50
-
-#     # Multiple files — overlaid CDFs + combined summary
-#     python3 plot_latency.py latency_1.csv latency_2.csv latency_3.csv --warmup 50
-
-#     # Labels for legend (must match number of CSV files)
-#     python3 plot_latency.py l1.csv l2.csv --labels "Loopback" "WiFi"
-
-#     # Plot only CDF or only time-series (single file only)
-#     python3 plot_latency.py latency_123.csv --no-lot
-#     python3 plot_latency.py latency_123.csv --no-cdf
-
-#     --warmup N   discard first N samples per file (default 200)
-#     --no-show    save without displaying
-#     --lot     skip CDF (single file only)
-#     --cdf     skip time-series (single file only)
-#     --labels     legend labels for multi-file mode
-# """
-
 import sys
 import pathlib
 import argparse

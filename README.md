@@ -7,7 +7,9 @@
 |2 | `ros2 run topic_tools relay /teleop /drive` |`/teleop` → `/drive` for gym_bridge |
 |3 | `ros2 run f1tenth_gym_ros ackermann_keyboard_teleop` | Keyboard — this terminal needs focus |
 |4 | `ros2 run f1tenth_gym_ros dt_pt_bridge --ros-args -p pt_host:=172.20.10.8` | Forwards to PT |
-|5 |  `ros2 run f1tenth_gym_ros latency_logger --ros-args -p output_dir:=/tmp/latency` | Benchmarking |
+|5 | `ros2 run f1tenth_gym_ros latency_logger --ros-args -p output_dir:=/tmp/latency` | Benchmarking |
+|6 | `ros2 run f1tenth_gym_ros trajectory_logger --ros-args -p output_dir:=/tmp/trajectory` | Benchmarking |
+|7 | `ros2 run f1tenth_gym_ros pt_odom_receiver` | Receives odometry from PT for logging |
 
 # On the car 
 |Terminal: | Command: | Purpose: |

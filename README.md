@@ -1,4 +1,4 @@
-## Pre-requisites:
+# Pre-requisites:
 - ROS2 Humble
 - Gazebo 11
 installation instructions: https://f1tenth.org/docs/sim/gym_ros/install/
@@ -12,8 +12,8 @@ colcon build --packages-select f1tenth_gym_ros
 source install/setup.bash
 ```
 
-## Full system test:
-# WSL
+# Full system test:
+## WSL
 |Terminal: | Command: | Purpose: |
 | --- | --- | --- |
 |all | `cd ~/sim_ws && colcon build --packages-select f1tenth_gym_ros && source install/setup.bash` | Sets up the environment|
@@ -25,7 +25,7 @@ source install/setup.bash
 |6 | `ros2 run f1tenth_gym_ros trajectory_logger --ros-args -p output_dir:=/tmp/trajectory` | Benchmarking |
 |7 | `ros2 run f1tenth_gym_ros pt_odom_receiver` | Receives odometry from PT for logging |
 
-# On the car 
+## On the car 
 |Terminal: | Command: | Purpose: |
 | --- | --- | --- |
 |1 | `cd Desktop/F1Tenth_DTaaS/ && export ROS_DOMAIN_ID=0` <br> `python3 dt_pt_listener.py --port 9870 --echo-back --send-odom --dt-host 172.20.10.2 --odom-port 9871` | Benchmarking |

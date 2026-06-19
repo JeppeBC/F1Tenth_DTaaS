@@ -1,22 +1,4 @@
 #!/usr/bin/env python3
-"""
-pt_odom_receiver.py  —  runs on WSL2
---------------------------------------
-Receives PT odometry UDP packets from dt_pt_listener (car) and publishes:
-  /odom              (nav_msgs/Odometry)              — for trajectory_logger
-  /initialpose       (PoseWithCovarianceStamped)       — for gym_bridge DT reset
-
-Packet format sent by dt_pt_listener --send-odom:
-  struct: <q f f f f  (stamp_ns, x, y, heading, speed)  = 28 bytes
-
-Run
----
-  ros2 run f1tenth_gym_ros pt_odom_receiver
-
-Parameters
-----------
-  listen_port   UDP port to receive on (default 9871)
-"""
 
 import math
 import socket

@@ -1,27 +1,4 @@
 #!/usr/bin/env python3
-"""
-dt_pt_listener.py  —  runs ON the physical F1Tenth car
--------------------------------------------------------
-Clean separation of concerns — does NOT touch the existing control chain:
-  joy_teleop → /teleop → ackermann_mux → /ackermann_cmd → VESC
-
-This script only:
-  1. Receives keyboard commands from WSL2 via UDP → publishes to /drive
-     (ackermann_mux navigation slot, priority 10 — joystick always wins)
-  2. Subscribes to /ackermann_cmd (mux output) → sends back to WSL2 via UDP
-     so the DT mirrors whatever the mux decides (keyboard or controller)
-  3. Sends /odom back to WSL2 for position mirroring
-  4. Echoes drive packets back to WSL2 for latency measurement
-
-Usage
------
-  export ROS_DOMAIN_ID=0
-  python3 dt_pt_listener.py --port 9870 --echo-back \\
-      --send-odom --dt-host 172.20.10.2 --odom-port 9871
-
-The joystick always has priority 90 vs keyboard priority 10 in the mux.
-No interference with existing teleop chain whatsoever.
-"""
 
 import argparse
 import socket

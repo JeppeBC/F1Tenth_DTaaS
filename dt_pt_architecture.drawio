@@ -1,216 +1,336 @@
-<mxfile host="65bd71144e">
-    <diagram name="DT-PT Architecture" id="dt-pt-arch">
-        <mxGraphModel dx="2778" dy="1196" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="1100" math="0" shadow="0">
-            <root>
-                <mxCell id="0"/>
-                <mxCell id="1" parent="0"/>
-                <mxCell id="wsl2_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#0057A3;strokeWidth=3;opacity=20;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#0057A3;" parent="1" vertex="1">
-                    <mxGeometry x="40" y="20" width="940" height="940" as="geometry"/>
-                </mxCell>
-                <mxCell id="wsl2_title" value="WSL2 / ROS 2 (Domain 0)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#0057A3;" parent="1" vertex="1">
-                    <mxGeometry x="40" y="48" width="940" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="car_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#C05000;strokeWidth=3;opacity=20;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#C05000;" parent="1" vertex="1">
-                    <mxGeometry x="1220" y="40" width="750" height="940" as="geometry"/>
-                </mxCell>
-                <mxCell id="car_title" value="Physical Car — Jetson / RPI (Domain 0)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#C05000;" parent="1" vertex="1">
-                    <mxGeometry x="1125" y="48" width="940" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="wifi_label" value="WiFi / UDP" style="text;html=1;strokeColor=#666666;fillColor=#f5f5f5;align=center;verticalAlign=middle;fontSize=12;fontStyle=3;fontColor=#666666;rounded=1;" parent="1" vertex="1">
-                    <mxGeometry x="1000" y="480" width="160" height="40" as="geometry"/>
-                </mxCell>
-                <mxCell id="keyboard" value="ackermann_keyboard_teleop" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#0057A3;fontSize=12;fontStyle=1;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="200" y="120" width="260" height="55" as="geometry"/>
-                </mxCell>
-                <mxCell id="joy_node" value="joy_node&#xa;(Bluetooth)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#0057A3;fontSize=12;fontStyle=1;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="1280" y="120" width="200" height="55" as="geometry"/>
-                </mxCell>
-                <mxCell id="joy_teleop" value="joy_teleop" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#0057A3;fontSize=12;fontStyle=1;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="1620" y="120" width="200" height="55" as="geometry"/>
-                </mxCell>
-                <mxCell id="bt_label" value="🎮 Bluetooth Controller" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontStyle=1;" parent="1" vertex="1">
-                    <mxGeometry x="1280" y="78" width="200" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="kb_label" value="⌨️ Keyboard" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontStyle=1;" parent="1" vertex="1">
-                    <mxGeometry x="200" y="78" width="260" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="teleop_wsl" value="/teleop&#xa;AckermannDriveStamped" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="210" y="240" width="240" height="70" as="geometry"/>
-                </mxCell>
-                <mxCell id="teleop_car" value="/teleop&#xa;AckermannDriveStamped" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="1580" y="240" width="240" height="70" as="geometry"/>
-                </mxCell>
-                <mxCell id="relay" value="topic_tools relay&#xa;/teleop → /drive" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="660" y="310" width="220" height="55" as="geometry"/>
-                </mxCell>
-                <mxCell id="ack_mux" value="ackermann_mux&#xa;/teleop  priority=90&#xa;/drive   priority=10" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontStyle=1;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="1630" y="390" width="260" height="70" as="geometry"/>
-                </mxCell>
-                <mxCell id="drive_wsl" value="/drive&#xa;AckermannDriveStamped" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="210" y="390" width="240" height="70" as="geometry"/>
-                </mxCell>
-                <mxCell id="drive_car" value="/drive  (p=10)&#xa;navigation slot" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="1280" y="390" width="200" height="70" as="geometry"/>
-                </mxCell>
-                <mxCell id="gym_bridge" value="gym_bridge&#xa;(Digital Twin / RViz2)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#2A9D3F;fontSize=12;fontStyle=1;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="70" y="720" width="240" height="55" as="geometry"/>
-                </mxCell>
-                <mxCell id="ack_cmd" value="/ackermann_cmd" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="1660" y="537.5" width="200" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="vesc" value="VESC driver&#xa;(motors)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#2A9D3F;fontSize=12;fontStyle=1;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="1660" y="700" width="200" height="55" as="geometry"/>
-                </mxCell>
-                <mxCell id="dt_pt_bridge" value="dt_pt_bridge" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="560" y="540" width="220" height="55" as="geometry"/>
-                </mxCell>
-                <mxCell id="dt_listener" value="dt_pt_listener&#xa;(echo-back + odom relay)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="1280" y="540" width="240" height="55" as="geometry"/>
-                </mxCell>
-                <mxCell id="teleop_echo" value="/teleop_echo&#xa;(dt_send stamped)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="560" y="680" width="220" height="70" as="geometry"/>
-                </mxCell>
-                <mxCell id="lat_logger" value="latency_logger&#xa;→ CSV + CDF" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="560" y="830" width="220" height="55" as="geometry"/>
-                </mxCell>
-                <mxCell id="odom" value="/odom&#xa;wheel odometry" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="1280" y="680" width="200" height="70" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_kb_tel" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#0057A3;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="keyboard" target="teleop_wsl" edge="1">
-                    <mxCell id="root" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_tel_relay" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6b656;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="teleop_wsl" target="relay" edge="1">
-                    <mxCell id="root" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_relay_drive" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#82b366;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="relay" target="drive_wsl" edge="1">
-                    <mxCell id="root" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_drive_gym" style="rounded=0;strokeColor=#2A9D3F;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;elbow=vertical;" parent="1" source="drive_wsl" target="gym_bridge" edge="1">
-                    <mxCell id="root" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="200" y="425"/>
-                            <mxPoint x="200" y="540"/>
-                            <mxPoint x="220" y="540"/>
-                            <mxPoint x="220" y="650"/>
-                            <mxPoint x="250" y="650"/>
-                            <mxPoint x="250" y="720"/>
-                        </Array>
-                    </mxCell>
-                </mxCell>
-                <mxCell id="e_drive_bridge" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="drive_wsl" target="dt_pt_bridge" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="330" y="510"/>
-                            <mxPoint x="470" y="510"/>
-                            <mxPoint x="470" y="568"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="e_bridge_echo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="dt_pt_bridge" target="teleop_echo" edge="1">
-                    <mxCell id="root" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_echo_log" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="teleop_echo" target="lat_logger" edge="1">
-                    <mxCell id="root" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_joy_jt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#0057A3;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="joy_node" target="joy_teleop" edge="1">
-                    <mxCell id="root" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_jt_tel" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6b656;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="joy_teleop" target="teleop_car" edge="1">
-                    <mxCell id="root" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_tel_mux" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d79b00;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="teleop_car" target="ack_mux" edge="1">
-                    <mxCell id="root" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_dcar_mux" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#82b366;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="drive_car" target="ack_mux" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="1380" y="500"/>
-                            <mxPoint x="1500" y="500"/>
-                            <mxPoint x="1500" y="415"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="e_mux_cmd" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d79b00;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="ack_mux" target="ack_cmd" edge="1">
-                    <mxCell id="root" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_cmd_vesc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#2A9D3F;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="ack_cmd" target="vesc" edge="1">
-                    <mxCell id="root" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_list_dcar" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#82b366;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="dt_listener" target="drive_car" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="1240" y="567"/>
-                            <mxPoint x="1240" y="500"/>
-                            <mxPoint x="1380" y="500"/>
-                            <mxPoint x="1380" y="460"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="e_odom_list" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#2A9D3F;strokeWidth=2;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="odom" target="dt_listener" edge="1">
-                    <mxCell id="root" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_v2p" value="UDP :9870  V2P" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;strokeWidth=3;fontStyle=1;fontSize=11;fontColor=#b85450;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="dt_pt_bridge" target="dt_listener" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="1000" y="567" as="targetPoint"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="e_echo_back" value="UDP echo-back (RTT)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;strokeWidth=2;dashed=1;fontStyle=2;fontSize=10;fontColor=#9673a6;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=1;entryDx=0;entryDy=0;" parent="1" source="dt_listener" target="dt_pt_bridge" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="1240" y="630"/>
-                            <mxPoint x="1080" y="630"/>
-                            <mxPoint x="1080" y="630"/>
-                            <mxPoint x="820" y="630"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="e_odom_dt" value="UDP :9871  P2V odom" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#2A9D3F;strokeWidth=2;dashed=1;fontStyle=2;fontSize=10;fontColor=#2A9D3F;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="1080" y="717"/>
-                            <mxPoint x="1080" y="650"/>
-                            <mxPoint x="430" y="650"/>
-                            <mxPoint x="430" y="750"/>
-                        </Array>
-                        <mxPoint x="1280" y="717.4" as="sourcePoint"/>
-                        <mxPoint x="310" y="749.9" as="targetPoint"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="e_dds" value="DDS bleed (domain 0)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6b656;strokeWidth=2;dashed=1;fontStyle=2;fontSize=10;fontColor=#b8860b;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="teleop_car" target="teleop_wsl" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="1500" y="275"/>
-                            <mxPoint x="1080" y="275"/>
-                            <mxPoint x="1080" y="275"/>
-                            <mxPoint x="500" y="275"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="leg_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1">
-                    <mxGeometry x="40" y="1010" width="1940" height="70" as="geometry"/>
-                </mxCell>
-                <mxCell id="leg_t" value="Legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;" parent="1" vertex="1">
-                    <mxGeometry x="60" y="1018" width="80" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="l1" value="━━  ROS topic (internal)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" parent="1" vertex="1">
-                    <mxGeometry x="60" y="1042" width="240" height="24" as="geometry"/>
-                </mxCell>
-                <mxCell id="l2" value="╌╌  DDS bleed / UDP (cross-boundary)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" parent="1" vertex="1">
-                    <mxGeometry x="320" y="1042" width="300" height="24" as="geometry"/>
-                </mxCell>
-                <mxCell id="l3" value="🔴  V2P path — DT command → PT" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#b85450;" parent="1" vertex="1">
-                    <mxGeometry x="640" y="1042" width="300" height="24" as="geometry"/>
-                </mxCell>
-                <mxCell id="l4" value="🟢  P2V path — PT odom → DT mirror" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#2A9D3F;" parent="1" vertex="1">
-                    <mxGeometry x="960" y="1042" width="300" height="24" as="geometry"/>
-                </mxCell>
-                <mxCell id="l5" value="🟣  Latency measurement — /teleop_echo RTT" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#9673a6;" parent="1" vertex="1">
-                    <mxGeometry x="1280" y="1042" width="380" height="24" as="geometry"/>
-                </mxCell>
-                <mxCell id="l6" value="Ellipses = ROS topics  |  Rounded rectangles = nodes" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontStyle=2;" parent="1" vertex="1">
-                    <mxGeometry x="1620" y="1042" width="420" height="24" as="geometry"/>
-                </mxCell>
-            </root>
-        </mxGraphModel>
-    </diagram>
+<mxfile host="app.diagrams.net" version="21.0.0">
+  <diagram name="DT-PT Architecture" id="dt-pt-arch">
+    <mxGraphModel dx="1800" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- BACKGROUND BOXES — drawn first so nodes appear on top     -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+
+        <!-- WSL2 box -->
+        <mxCell id="wsl2_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#0057A3;strokeWidth=3;opacity=20;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#0057A3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="940" height="940" as="geometry" />
+        </mxCell>
+        <mxCell id="wsl2_title" value="WSL2 / ROS 2 (Domain 0)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#0057A3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="940" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Car / Jetson box -->
+        <mxCell id="car_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#C05000;strokeWidth=3;opacity=20;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#C05000;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="40" width="940" height="940" as="geometry" />
+        </mxCell>
+        <mxCell id="car_title" value="Physical Car — Jetson / RPI (Domain 0)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#C05000;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="48" width="940" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- WiFi gap label -->
+        <mxCell id="wifi_label" value="WiFi / UDP" style="text;html=1;strokeColor=#666666;fillColor=#f5f5f5;align=center;verticalAlign=middle;fontSize=12;fontStyle=3;fontColor=#666666;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="480" width="160" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- ROW 1 — Input sources                                     -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+
+        <!-- Keyboard teleop (WSL2) -->
+        <mxCell id="keyboard" value="ackermann_keyboard_teleop" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#0057A3;fontSize=12;fontStyle=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="200" y="120" width="260" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- joy_node (car) -->
+        <mxCell id="joy_node" value="joy_node&#xa;(Bluetooth)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#0057A3;fontSize=12;fontStyle=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="120" width="200" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- joy_teleop (car) -->
+        <mxCell id="joy_teleop" value="joy_teleop" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#0057A3;fontSize=12;fontStyle=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1620" y="120" width="200" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- Bluetooth controller label -->
+        <mxCell id="bt_label" value="🎮 Bluetooth Controller" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="78" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Keyboard label -->
+        <mxCell id="kb_label" value="⌨️ Keyboard" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="78" width="260" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- ROW 2 — /teleop topics                                    -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+
+        <!-- /teleop (WSL2) -->
+        <mxCell id="teleop_wsl" value="/teleop&#xa;AckermannDriveStamped" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="210" y="240" width="240" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- /teleop (car) -->
+        <mxCell id="teleop_car" value="/teleop&#xa;AckermannDriveStamped" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1580" y="240" width="240" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- ROW 3 — Relay + mux                                       -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+
+        <!-- relay (WSL2) -->
+        <mxCell id="relay" value="topic_tools relay&#xa;/teleop → /drive" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="560" y="250" width="220" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- ackermann_mux (car) -->
+        <mxCell id="ack_mux" value="ackermann_mux&#xa;/teleop  priority=90&#xa;/drive   priority=10" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontStyle=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="380" width="260" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- ROW 4 — /drive topics                                     -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+
+        <!-- /drive (WSL2) -->
+        <mxCell id="drive_wsl" value="/drive&#xa;AckermannDriveStamped" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="210" y="390" width="240" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- /drive (car) — navigation slot p=10 -->
+        <mxCell id="drive_car" value="/drive  (p=10)&#xa;navigation slot" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="390" width="200" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- ROW 5 — gym_bridge / ackermann_cmd / VESC                 -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+
+        <!-- gym_bridge (WSL2) -->
+        <mxCell id="gym_bridge" value="gym_bridge&#xa;(Digital Twin / RViz2)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#2A9D3F;fontSize=12;fontStyle=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="80" y="540" width="240" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- /ackermann_cmd (car) -->
+        <mxCell id="ack_cmd" value="/ackermann_cmd" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="530" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- VESC (car) -->
+        <mxCell id="vesc" value="VESC driver&#xa;(motors)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#2A9D3F;fontSize=12;fontStyle=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="670" width="200" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- ROW 6 — bridge / listener                                  -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+
+        <!-- dt_pt_bridge (WSL2) -->
+        <mxCell id="dt_pt_bridge" value="dt_pt_bridge" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="560" y="540" width="220" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- dt_pt_listener (car) -->
+        <mxCell id="dt_listener" value="dt_pt_listener&#xa;(echo-back + odom relay)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="540" width="240" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- ROW 7 — echo + logger + odom                              -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+
+        <!-- /teleop_echo (WSL2) -->
+        <mxCell id="teleop_echo" value="/teleop_echo&#xa;(dt_send stamped)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="560" y="680" width="220" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- latency_logger (WSL2) -->
+        <mxCell id="lat_logger" value="latency_logger&#xa;→ CSV + CDF" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="560" y="830" width="220" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- /odom (car) -->
+        <mxCell id="odom" value="/odom&#xa;wheel odometry" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="680" width="200" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- WSL2 INTERNAL EDGES                                       -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+
+        <!-- keyboard → /teleop (WSL2) -->
+        <mxCell id="e_kb_tel" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#0057A3;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="keyboard" target="teleop_wsl" parent="1">
+          <mxCell as="geometry" />
+        </mxCell>
+
+        <!-- /teleop (WSL2) → relay -->
+        <mxCell id="e_tel_relay" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6b656;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="teleop_wsl" target="relay" parent="1">
+          <mxCell as="geometry" />
+        </mxCell>
+
+        <!-- relay → /drive (WSL2) -->
+        <mxCell id="e_relay_drive" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#82b366;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="relay" target="drive_wsl" parent="1">
+          <mxCell as="geometry" />
+        </mxCell>
+
+        <!-- /drive (WSL2) → gym_bridge -->
+        <mxCell id="e_drive_gym" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#2A9D3F;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="drive_wsl" target="gym_bridge" parent="1">
+          <mxCell as="geometry" />
+        </mxCell>
+
+        <!-- /drive (WSL2) → dt_pt_bridge -->
+        <mxCell id="e_drive_bridge" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="drive_wsl" target="dt_pt_bridge" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="330" y="510" />
+              <mxPoint x="560" y="510" />
+              <mxPoint x="560" y="567" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- dt_pt_bridge → /teleop_echo -->
+        <mxCell id="e_bridge_echo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="dt_pt_bridge" target="teleop_echo" parent="1">
+          <mxCell as="geometry" />
+        </mxCell>
+
+        <!-- /teleop_echo → latency_logger -->
+        <mxCell id="e_echo_log" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="teleop_echo" target="lat_logger" parent="1">
+          <mxCell as="geometry" />
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- CAR INTERNAL EDGES                                        -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+
+        <!-- joy_node → joy_teleop -->
+        <mxCell id="e_joy_jt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#0057A3;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="joy_node" target="joy_teleop" parent="1">
+          <mxCell as="geometry" />
+        </mxCell>
+
+        <!-- joy_teleop → /teleop (car) -->
+        <mxCell id="e_jt_tel" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6b656;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" source="joy_teleop" target="teleop_car" parent="1">
+          <mxCell as="geometry" />
+        </mxCell>
+
+        <!-- /teleop (car) → ack_mux -->
+        <mxCell id="e_tel_mux" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d79b00;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" source="teleop_car" target="ack_mux" parent="1">
+          <mxCell as="geometry" />
+        </mxCell>
+
+        <!-- /drive (car) → ack_mux -->
+        <mxCell id="e_dcar_mux" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#82b366;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="drive_car" target="ack_mux" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1380" y="500" />
+              <mxPoint x="1500" y="500" />
+              <mxPoint x="1500" y="415" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ack_mux → /ackermann_cmd -->
+        <mxCell id="e_mux_cmd" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d79b00;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="ack_mux" target="ack_cmd" parent="1">
+          <mxCell as="geometry" />
+        </mxCell>
+
+        <!-- /ackermann_cmd → VESC -->
+        <mxCell id="e_cmd_vesc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#2A9D3F;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="ack_cmd" target="vesc" parent="1">
+          <mxCell as="geometry" />
+        </mxCell>
+
+        <!-- dt_pt_listener → /drive (car) -->
+        <mxCell id="e_list_dcar" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#82b366;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" source="dt_listener" target="drive_car" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1240" y="567" />
+              <mxPoint x="1240" y="500" />
+              <mxPoint x="1380" y="500" />
+              <mxPoint x="1380" y="460" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- /odom → dt_pt_listener -->
+        <mxCell id="e_odom_list" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#2A9D3F;strokeWidth=2;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" source="odom" target="dt_listener" parent="1">
+          <mxCell as="geometry" />
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- CROSS-BOUNDARY EDGES (WiFi / UDP)                         -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+
+        <!-- V2P: dt_pt_bridge → dt_pt_listener  (UDP :9870) -->
+        <mxCell id="e_v2p" value="UDP :9870  V2P" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;strokeWidth=3;fontStyle=1;fontSize=11;fontColor=#b85450;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="dt_pt_bridge" target="dt_listener" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1000" y="567" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- P2V echo: dt_pt_listener → dt_pt_bridge  (UDP echo-back) -->
+        <mxCell id="e_echo_back" value="UDP echo-back (RTT)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;strokeWidth=2;dashed=1;fontStyle=2;fontSize=10;fontColor=#9673a6;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=1;entryDx=0;entryDy=0;" edge="1" source="dt_listener" target="dt_pt_bridge" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1240" y="630" />
+              <mxPoint x="1080" y="630" />
+              <mxPoint x="1080" y="630" />
+              <mxPoint x="820" y="630" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- P2V odom: odom → gym_bridge  (UDP :9871) -->
+        <mxCell id="e_odom_dt" value="UDP :9871  P2V odom" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#2A9D3F;strokeWidth=2;dashed=1;fontStyle=2;fontSize=10;fontColor=#2A9D3F;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="odom" target="gym_bridge" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1180" y="715" />
+              <mxPoint x="1080" y="715" />
+              <mxPoint x="1080" y="567" />
+              <mxPoint x="380" y="567" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- DDS bleed: /teleop (car) → /teleop (WSL2) -->
+        <mxCell id="e_dds" value="DDS bleed (domain 0)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6b656;strokeWidth=2;dashed=1;fontStyle=2;fontSize=10;fontColor=#b8860b;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="teleop_car" target="teleop_wsl" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1500" y="275" />
+              <mxPoint x="1080" y="275" />
+              <mxPoint x="1080" y="275" />
+              <mxPoint x="500" y="275" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- LEGEND                                                    -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <mxCell id="leg_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1010" width="2120" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_t" value="Legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1018" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="l1" value="━━  ROS topic (internal)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1042" width="240" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="l2" value="╌╌  DDS bleed / UDP (cross-boundary)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="320" y="1042" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="l3" value="🔴  V2P path — DT command → PT" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="640" y="1042" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="l4" value="🟢  P2V path — PT odom → DT mirror" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#2A9D3F;" vertex="1" parent="1">
+          <mxGeometry x="960" y="1042" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="l5" value="🟣  Latency measurement — /teleop_echo RTT" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="1042" width="380" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="l6" value="Ellipses = ROS topics  |  Rounded rectangles = nodes" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="1700" y="1042" width="420" height="24" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
 </mxfile>

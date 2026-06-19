@@ -1,20 +1,3 @@
-"""
-plot_trajectory.py
-------------------
-Plots DT vs PT trajectory and computes reality gap metrics.
-
-Usage:
-    python3 plot_trajectory.py trajectory_slow.csv [trajectory_medium.csv ...]
-    python3 plot_trajectory.py /tmp/trajectory/ --labels "Slow" "Medium" "Fast"
-    python3 plot_trajectory.py --no-show
-
-Key design choices:
-  - Both trajectories zeroed to (0,0) at their own start so coordinate
-    frames don't matter — only divergence from start is measured.
-  - Merge uses PT as reference (50 Hz) to avoid oscillation from DT's
-    higher rate (250 Hz).
-"""
-
 import sys
 import pathlib
 import argparse

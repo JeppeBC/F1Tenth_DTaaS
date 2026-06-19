@@ -1,0 +1,23 @@
+# Python dependencies for F1Tenth DTaaS
+# Install with: pip install -r requirements.txt
+
+# Data processing and plotting (plot_latency.py, plot_trajectory.py, plot_fig2_cdf.py)
+numpy
+pandas
+matplotlib
+
+# Quaternion / Euler conversion (gym_bridge.py)
+transforms3d
+
+# F1Tenth simulator — install from source:
+# git clone https://github.com/f1tenth/f1tenth_gym && pip install -e f1tenth_gym
+# gym  # pulled in as a dependency of f1tenth_gym
+
+# ── ROS2 packages (installed via apt / colcon, not pip) ───────────────────────
+# rclpy
+# ackermann_msgs
+# nav_msgs
+# sensor_msgs
+# geometry_msgs
+# diagnostic_msgs
+# tf2_ros

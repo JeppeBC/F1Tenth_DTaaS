@@ -1,17 +1,3 @@
-# Pre-requisites:
-- ROS2 Humble
-- Gazebo 11
-installation instructions: https://f1tenth.org/docs/sim/gym_ros/install/
-
-Install the package in a ROS2 workspace:
-```bash
-cd ~/sim_ws/src
-git clone
-cd ..
-colcon build --packages-select f1tenth_gym_ros
-source install/setup.bash
-```
-
 # Full system test:
 ## WSL
 |Terminal: | Command: | Purpose: |
